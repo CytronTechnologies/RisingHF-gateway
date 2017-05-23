@@ -1,19 +1,11 @@
-# The Things Network: RisingHF-based gateway
+# The Things Network Installer for RisingHF-based gateway
 
 Reference setup for [The Things Network](http://thethingsnetwork.org/) gateways based on the RisingHF 915MHz 8-Channel LoRa concentrator with a Raspberry Pi host.
 
 This installer targets the **SPI version** of the board.
 
-## Setup based on Raspbian image
+## Manual Installation on Raspbian image
 
-- Download [Raspbian Jessie Lite](https://www.raspberrypi.org/downloads/)
-- Follow the [installation instruction](https://www.raspberrypi.org/documentation/installation/installing-images/README.md) to create the SD card
-- Start your RPi connected to Ethernet
-- From a computer in the same LAN, `ssh` into the RPi using the default hostname:
-
-        $ ssh pi@raspberrypi.local
-
-- Default password of a plain-vanilla RASPBIAN install for user `pi` is `raspberry`
 - Use raspi-config utility to **enable SPI** and also **expand the filesystem**:
 
         $ sudo raspi-config
@@ -24,7 +16,9 @@ This installer targets the **SPI version** of the board.
         $ sudo dpkg-reconfigure locales
         $ sudo dpkg-reconfigure tzdata
 
-- Make sure you have an updated installation and install `git`:
+- **Optional, you can follow this step if you are using fresh Raspbian image**
+
+  Make sure you have an updated installation and install `git`:
 
         $ sudo apt-get update
         $ sudo apt-get upgrade
@@ -36,7 +30,7 @@ This installer targets the **SPI version** of the board.
 
         $ sudo nano /etc/wpa_supplicant/wpa_supplicant.conf 
 
-And add the following block at the end of the file, replacing SSID and password to match your network:
+  And add the following block at the end of the file, replacing SSID and password to match your network:
 
                 network={
                     ssid="The_SSID_of_your_wifi"
