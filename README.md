@@ -32,10 +32,10 @@ This installer targets the **SPI version** of the board.
 
   And add the following block at the end of the file, replacing SSID and password to match your network:
 
-                network={
-                    ssid="The_SSID_of_your_wifi"
-                    psk="Your_wifi_password"
-                }
+        network={
+           ssid="The_SSID_of_your_wifi"
+           psk="Your_wifi_password"
+        }
  
 - Clone [the installer](https://github.com/CytronTechnologies/RisingHF-gateway/) and start the installation
 
