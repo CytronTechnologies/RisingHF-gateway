@@ -1,4 +1,4 @@
-# The Things Network: iC880a-based gateway
+# The Things Network: RisingHF-based gateway
 
 Reference setup for [The Things Network](http://thethingsnetwork.org/) gateways based on the RisingHF 915MHz 8-Channel LoRa concentrator with a Raspberry Pi host.
 
@@ -61,8 +61,8 @@ And add the following block at the end of the file, replacing SSID and password 
  
 - Clone [the installer](https://github.com/CytronTechnologies/ic880a-gateway/) and start the installation
 
-        $ git clone https://github.com/CytronTechnologies/ic880a-gateway.git ~/ic880a-gateway
-        $ cd ~/ic880a-gateway
+        $ git clone https://github.com/CytronTechnologies/RisingHF-gateway.git ~/RisingHF-gateway
+        $ cd ~/RisingHF-gateway
         $ sudo ./install.sh
 
 - By default, AU920-global_conf.json will be used. By declaring which band you are going to use in installation, different global_conf.json will be installed. For more info, please refer to [gateway-conf](https://github.com/CytronTechnologies/gateway-conf).
