@@ -22,12 +22,12 @@ INSTALL_DIR="/opt/ttn-gateway"
 LOCAL_CONFIG_FILE=$INSTALL_DIR/bin/local_conf.json
 GLOBAL_CONFIG_FILE=$INSTALL_DIR/bin/global_conf.json
 
-if [ -e $GLOBAL_CONFIG_FILE ]; then
+if [ ! -e $GLOBAL_CONFIG_FILE ]; then
   echo "ERROR: No global_conf.json found."
   exit 1
 fi
 
-if [ -e $LOCAL_CONFIG_FILE ]; then
+if [ ! -e $LOCAL_CONFIG_FILE ]; then
   echo "ERROR: No local_conf.json found."
   exit 1
 fi
@@ -62,7 +62,13 @@ if [ -d ../gateway-remote-config ]; then
 
 else
     # Retrieve gateway ID in local_conf.json
-    GATEWAY_EUI_JSON=$(cat $LOCAL_CONFIG_FILE | grep "\"gateway_ID\":" | awk '/\"gateway_ID\":/ {print $2}' | cut -d '"' -f2)
+    GATEWAY_EUI_JSON=$(cat $LOCAL_CONFIG_FILE | grep "\"gateway_ID\":" | cut -d '"' -f4)
+    
+    if [[ $GATEWAY_EUI_JSON == "" ]]; then
+         echo "ERROR: Cannot parse Gateway ID in local_conf.json, make sure it is not empty"
+         exit 1
+    fi
+    
     echo "Gateway ID found from local_conf.json: $GATEWAY_EUI_JSON"
     
     # Check if the gateway ID is equal to GATEWAY_EUI
