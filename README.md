@@ -2,7 +2,7 @@
 
 Reference setup for [The Things Network](http://thethingsnetwork.org/) gateways based on the iC880a USB concentrator with a Raspberry Pi host.
 
-This installer targets the **USB version** of the board, if you have the SPI version, [check this branch](https://github.com/ttn-zh/ic880a-gateway/tree/spi).
+This installer targets the **SPI version** of the board.
 
 ## Setup based on Raspbian image
 
@@ -65,7 +65,13 @@ And add the following block at the end of the file, replacing SSID and password 
         $ cd ~/ic880a-gateway
         $ sudo ./install.sh
 
-- If you want to use the remote configuration option, please make sure you have created a JSON file named as your gateway EUI (e.g. `B827EBFFFE7B80CD.json`) in the [Gateway Remote Config repository](https://github.com/ttn-zh/gateway-remote-config). 
+- by default, AU920-global_conf.json will be used. By declaring which band you are going to use, different global_conf.json will be installed. For more info, please refer to [gateway-conf](https://github.com/CytronTechnologies/gateway-conf).
+	
+	* AU_915 - `$ sudo ./install.sh AU_915`
+	* AU_920 - `$ sudo ./install.sh AU_920`
+        * MY_919 - `$ sudo ./install.sh MY_919`
+	* US_902 - `$ sudo ./install.sh US_902`
+
 - **Big Success!** You should now have a running gateway in front of you!
 
 # Credits

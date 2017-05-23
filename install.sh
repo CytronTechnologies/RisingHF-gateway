@@ -8,8 +8,9 @@ if [ $UID != 0 ]; then
     exit 1
 fi
 
-VERSION="master"
-if [[ $1 != "" ]]; then VERSION=$1; fi
+VERSION="spi"
+CONFIG="AU_920"
+if [[ $1 != "" ]]; then CONFIG=$1; fi
 
 echo "The Things Network Gateway installer"
 echo "Version $VERSION"
@@ -18,13 +19,13 @@ echo "Version $VERSION"
 echo "Updating installer files..."
 OLD_HEAD=$(git rev-parse HEAD)
 git fetch
-git checkout -q $VERSION
+#git checkout -q $VERSION
 git pull
 NEW_HEAD=$(git rev-parse HEAD)
 
 if [[ $OLD_HEAD != $NEW_HEAD ]]; then
     echo "New installer found. Restarting process..."
-    exec "./install.sh" "$VERSION"
+    exec "./install.sh" "$CONFIG"
 fi
 
 # Request gateway configuration data
@@ -49,13 +50,13 @@ GATEWAY_EUI=${GATEWAY_EUI^^} # toupper
 
 echo "Detected EUI $GATEWAY_EUI from $GATEWAY_EUI_NIC"
 
-read -r -p "Do you want to use remote settings file? [y/N]" response
-response=${response,,} # tolower
+#read -r -p "Do you want to use remote settings file? [y/N]" response
+#response=${response,,} # tolower
 
-if [[ $response =~ ^(yes|y) ]]; then
-    NEW_HOSTNAME="ttn-gateway"
-    REMOTE_CONFIG=true
-else
+#if [[ $response =~ ^(yes|y) ]]; then
+#    NEW_HOSTNAME="ttn-gateway"
+#    REMOTE_CONFIG=true
+#else
     printf "       Host name [ttn-gateway]:"
     read NEW_HOSTNAME
     if [[ $NEW_HOSTNAME == "" ]]; then NEW_HOSTNAME="ttn-gateway"; fi
@@ -78,7 +79,7 @@ else
     printf "       Altitude [0]: "
     read GATEWAY_ALT
     if [[ $GATEWAY_ALT == "" ]]; then GATEWAY_ALT=0; fi
-fi
+#fi
 
 
 # Change hostname if needed
@@ -100,26 +101,17 @@ INSTALL_DIR="/opt/ttn-gateway"
 if [ ! -d "$INSTALL_DIR" ]; then mkdir $INSTALL_DIR; fi
 pushd $INSTALL_DIR
 
-# Build libraries
-if [ ! -d libmpsse ]; then
-    git clone https://github.com/devttys0/libmpsse.git
-    pushd libmpsse/src
-else
-    pushd libmpsse/src
-    git reset --hard
-    git pull
-fi
-
-./configure --disable-python
-make
-make install
-ldconfig
-
-popd
+# Remove WiringPi built from source (older installer versions)
+if [ -d wiringPi ]; then
+    pushd wiringPi
+    ./build uninstall
+    popd
+    rm -rf wiringPi
+fi 
 
 # Build LoRa gateway app
 if [ ! -d lora_gateway ]; then
-    git clone -b legacy https://github.com/TheThingsNetwork/lora_gateway.git
+    git clone -b legacy https://github.com/CytronTechnologies/lora_gateway.git
     pushd lora_gateway
 else
     pushd lora_gateway
@@ -128,11 +120,7 @@ else
     git reset --hard
 fi
 
-cp ./libloragw/99-libftdi.rules /etc/udev/rules.d/99-libftdi.rules
-
-sed -i -e 's/CFG_SPI= native/CFG_SPI= ftdi/g' ./libloragw/library.cfg
-sed -i -e 's/PLATFORM= kerlink/PLATFORM= lorank/g' ./libloragw/library.cfg
-sed -i -e 's/ATTRS{idProduct}=="6010"/ATTRS{idProduct}=="6014"/g' /etc/udev/rules.d/99-libftdi.rules
+sed -i -e 's/PLATFORM= kerlink/PLATFORM= imst_rpi/g' ./libloragw/library.cfg
 
 make
 
@@ -140,7 +128,7 @@ popd
 
 # Build packet forwarder
 if [ ! -d packet_forwarder ]; then
-    git clone -b legacy https://github.com/TheThingsNetwork/packet_forwarder.git
+    git clone -b legacy https://github.com/CytronTechnologies/packet_forwarder.git
     pushd packet_forwarder
 else
     pushd packet_forwarder
@@ -153,34 +141,64 @@ make
 
 popd
 
+# Download gateway conf
+if [ ! -d gateway-conf ]; then
+    git clone https://github.com/CytronTechnologies/gateway-conf.git
+else
+    pushd gateway-conf
+    git fetch origin
+    git checkout master
+    git reset --hard
+    popd
+fi
+
 # Symlink poly packet forwarder
 if [ ! -d bin ]; then mkdir bin; fi
 if [ -f ./bin/poly_pkt_fwd ]; then rm ./bin/poly_pkt_fwd; fi
 ln -s $INSTALL_DIR/packet_forwarder/poly_pkt_fwd/poly_pkt_fwd ./bin/poly_pkt_fwd
-cp -f ./packet_forwarder/poly_pkt_fwd/global_conf.json ./bin/global_conf.json
+
+if [[ $CONFIG == "AU_915" ]];then
+    cp -f ./gateway-conf/AU-global_conf.json ./bin/global_conf.json
+fi
+if [[ $CONFIG == "AU_920" ]];then
+    cp -f ./gateway-conf/AU920-global_conf.json ./bin/global_conf.json
+fi
+if [[ $CONFIG == "MY_919" ]];then
+    cp -f ./gateway-conf/MY-global_conf.json ./bin/global_conf.json
+fi
+if [[ $CONFIG == "US_902" ]];then
+    cp -f ./gateway-conf/US-global_conf.json ./bin/global_conf.json
+fi
+
+# in case $CONFIG is invalid, use AU920-global_conf
+if [ -f ./bin/global_conf.json ]; then cp -f ./gateway-conf/AU920-global_conf.json ./bin/global_conf.json; fi
 
 LOCAL_CONFIG_FILE=$INSTALL_DIR/bin/local_conf.json
 
 # Remove old config file
 if [ -e $LOCAL_CONFIG_FILE ]; then rm $LOCAL_CONFIG_FILE; fi;
 
-if [ "$REMOTE_CONFIG" = true ] ; then
-    # Get remote configuration repo
-    if [ ! -d gateway-remote-config ]; then
-        git clone https://github.com/ttn-zh/gateway-remote-config.git
-        pushd gateway-remote-config
-    else
-        pushd gateway-remote-config
-        git pull
-        git reset --hard
-    fi
+#if [ "$REMOTE_CONFIG" = true ] ; then
+#    # Get remote configuration repo
+#    if [ ! -d gateway-remote-config ]; then
+#        git clone https://github.com/ttn-zh/gateway-remote-config.git
+#        pushd gateway-remote-config
+#    else
+#        pushd gateway-remote-config
+#        git pull
+#        git reset --hard
+#    fi
+#
+#    ln -s $INSTALL_DIR/gateway-remote-config/$GATEWAY_EUI.json $LOCAL_CONFIG_FILE
 
-    ln -s $INSTALL_DIR/gateway-remote-config/$GATEWAY_EUI.json $LOCAL_CONFIG_FILE
+#    popd
+#else
 
-    popd
-else
-    echo -e "{\n\t\"gateway_conf\": {\n\t\t\"gateway_ID\": \"$GATEWAY_EUI\",\n\t\t\"servers\": [ { \"server_address\": \"router.eu.thethings.network\", \"serv_port_up\": 1700, \"serv_port_down\": 1700, \"serv_enabled\": true } ],\n\t\t\"ref_latitude\": $GATEWAY_LAT,\n\t\t\"ref_longitude\": $GATEWAY_LON,\n\t\t\"ref_altitude\": $GATEWAY_ALT,\n\t\t\"contact_email\": \"$GATEWAY_EMAIL\",\n\t\t\"description\": \"$GATEWAY_NAME\" \n\t}\n}" >$LOCAL_CONFIG_FILE
-fi
+ROUTER=au
+if [[ $CONFIG == "US_902" ]];then ROUTER=us ;fi;
+
+    echo -e "{\n\t\"gateway_conf\": {\n\t\t\"gateway_ID\": \"$GATEWAY_EUI\",\n\t\t\"servers\": [ { \"server_address\": \"router.$ROUTER.thethings.network\", \"serv_port_up\": 1700, \"serv_port_down\": 1700, \"serv_enabled\": true } ],\n\t\t\"ref_latitude\": $GATEWAY_LAT,\n\t\t\"ref_longitude\": $GATEWAY_LON,\n\t\t\"ref_altitude\": $GATEWAY_ALT,\n\t\t\"contact_email\": \"$GATEWAY_EMAIL\",\n\t\t\"description\": \"$GATEWAY_NAME\" \n\t}\n}" >$LOCAL_CONFIG_FILE
+#fi
 
 popd
 
@@ -191,10 +209,10 @@ echo
 echo "Installation completed."
 
 # Start packet forwarder as a service
-cp ./start.sh $INSTALL_DIR/bin/
-cp ./ttn-gateway.service /lib/systemd/system/
-systemctl enable ttn-gateway.service
+#cp ./start.sh $INSTALL_DIR/bin/
+#cp ./ttn-gateway.service /lib/systemd/system/
+#systemctl enable ttn-gateway.service
 
-echo "The system will reboot in 5 seconds..."
-sleep 5
-shutdown -r now
+#echo "The system will reboot in 5 seconds..."
+#sleep 5
+#shutdown -r now
