@@ -59,7 +59,7 @@ And add the following block at the end of the file, replacing SSID and password 
                     psk="Your_wifi_password"
                 }
  
-- Clone [the installer](https://github.com/CytronTechnologies/ic880a-gateway/) and start the installation
+- Clone [the installer](https://github.com/CytronTechnologies/RisingHF-gateway/) and start the installation
 
         $ git clone https://github.com/CytronTechnologies/RisingHF-gateway.git ~/RisingHF-gateway
         $ cd ~/RisingHF-gateway
