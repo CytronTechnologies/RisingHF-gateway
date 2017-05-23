@@ -14,7 +14,8 @@ if [[ $1 != "" ]]; then CONFIG=$1; fi
 
 echo "The Things Network Gateway installer"
 echo "Modified by Cytron Technologies Sdn Bhd"
-echo "Version $VERSION"
+echo "Version: $VERSION"
+echo "Config: $CONFIG"
 
 # Update the gateway installer to the correct branch (defaults to master)
 echo "Updating installer files..."
@@ -154,6 +155,8 @@ if [ ! -d bin ]; then mkdir bin; fi
 if [ -f ./bin/poly_pkt_fwd ]; then rm ./bin/poly_pkt_fwd; fi
 ln -s $INSTALL_DIR/packet_forwarder/poly_pkt_fwd/poly_pkt_fwd ./bin/poly_pkt_fwd
 
+if [ -f ./bin/global_conf.json ]; then rm ./bin/global_conf.json; fi
+
 if [[ $CONFIG == "AU_915" ]];then
     cp -f ./gateway-conf/AU-global_conf.json ./bin/global_conf.json
 fi
@@ -168,7 +171,7 @@ if [[ $CONFIG == "US_902" ]];then
 fi
 
 # in case $CONFIG is invalid, use AU920-global_conf
-if [ -f ./bin/global_conf.json ]; then cp -f ./gateway-conf/AU920-global_conf.json ./bin/global_conf.json; fi
+if [ ! -f ./bin/global_conf.json ]; then cp -f ./gateway-conf/AU920-global_conf.json ./bin/global_conf.json; fi
 
 LOCAL_CONFIG_FILE=$INSTALL_DIR/bin/local_conf.json
 
