@@ -13,6 +13,7 @@ CONFIG="AU_920"
 if [[ $1 != "" ]]; then CONFIG=$1; fi
 
 echo "The Things Network Gateway installer"
+echo "Modified by Cytron Technologies Sdn Bhd"
 echo "Version $VERSION"
 
 # Update the gateway installer to the correct branch (defaults to master)
