@@ -4,8 +4,9 @@ Reference setup for [The Things Network](http://thethingsnetwork.org/) gateways 
 
 This installer targets the **SPI version** of the board.
 
-## Manual Installation on Raspbian image
+## Manual Installation on Raspbian Image
 
+- Connect Raspberry Pi to Ethernet or WiFi
 - Use raspi-config utility to **enable SPI** and also **expand the filesystem**:
 
         $ sudo raspi-config
