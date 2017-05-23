@@ -9,17 +9,16 @@ This installer targets the **SPI version** of the board.
 - Download [Raspbian Jessie Lite](https://www.raspberrypi.org/downloads/)
 - Follow the [installation instruction](https://www.raspberrypi.org/documentation/installation/installing-images/README.md) to create the SD card
 - Start your RPi connected to Ethernet
-- Plug the iC880a (**WARNING**: first power plug to the wall socket, then to the gateway DC jack, and ONLY THEN USB to RPi!)
 - From a computer in the same LAN, `ssh` into the RPi using the default hostname:
 
-        local $ ssh pi@raspberrypi.local
+        $ ssh pi@raspberrypi.local
 
 - Default password of a plain-vanilla RASPBIAN install for user `pi` is `raspberry`
-- Use `raspi-config` utility to expand the filesystem (1 Expand filesystem):
+- Use raspi-config utility to **enable SPI** and also **expand the filesystem**:
 
         $ sudo raspi-config
 
-- Reboot
+- Reboot (it will ask on exit, but you can do it manually with sudo reboot)
 - Configure locales and time zone:
 
         $ sudo dpkg-reconfigure locales
@@ -31,24 +30,9 @@ This installer targets the **SPI version** of the board.
         $ sudo apt-get upgrade
         $ sudo apt-get install git
 
-- Create new user for TTN and add it to sudoers
+- **Optional, you can follow this step if you wish to use WiFi instead of Ethernet**
 
-        $ sudo adduser ttn 
-        $ sudo adduser ttn sudo
-
-- To prevent the system asking root password regularly, add TTN user in sudoers file
-
-        $ sudo visudo
-
-Add the line `ttn ALL=(ALL) NOPASSWD: ALL`
-
-:warning: Beware this allows a connected console with the ttn user to issue any commands on your system, without any password control. This step is completely optional and remains your decision.
-
-- Logout and login as `ttn` and remove the default `pi` user
-
-        $ sudo userdel -rf pi
-
-- Configure the wifi credentials (check [here for additional details](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md))
+  Configure the wifi credentials (check [here for additional details](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md))
 
         $ sudo nano /etc/wpa_supplicant/wpa_supplicant.conf 
 
