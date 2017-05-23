@@ -61,15 +61,15 @@ And add the following block at the end of the file, replacing SSID and password 
  
 - Clone [the installer](https://github.com/ttn-zh/ic880a-gateway/) and start the installation
 
-        $ git clone https://github.com/ttn-zh/ic880a-gateway.git ~/ic880a-gateway
+        $ git clone https://github.com/CytronTechnologies/ic880a-gateway.git ~/ic880a-gateway
         $ cd ~/ic880a-gateway
         $ sudo ./install.sh
 
-- by default, AU920-global_conf.json will be used. By declaring which band you are going to use, different global_conf.json will be installed. For more info, please refer to [gateway-conf](https://github.com/CytronTechnologies/gateway-conf).
+- By default, AU920-global_conf.json will be used. By declaring which band you are going to use in installation, different global_conf.json will be installed. For more info, please refer to [gateway-conf](https://github.com/CytronTechnologies/gateway-conf).
 	
 	* AU_915 - `$ sudo ./install.sh AU_915`
 	* AU_920 - `$ sudo ./install.sh AU_920`
-        * MY_919 - `$ sudo ./install.sh MY_919`
+	* MY_919 - `$ sudo ./install.sh MY_919`
 	* US_902 - `$ sudo ./install.sh US_902`
 
 - **Big Success!** You should now have a running gateway in front of you!
