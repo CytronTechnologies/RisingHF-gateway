@@ -79,4 +79,4 @@ else
 fi
 
 # Fire up the forwarder.  
-./poly_pkt_fwd
+./connect.sh & ./poly_pkt_fwd
