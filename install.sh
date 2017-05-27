@@ -210,6 +210,8 @@ echo "Installation completed."
 
 # Start packet forwarder as a service
 cp ./start.sh $INSTALL_DIR/bin/
+cp ./connect.sh $INSTALL_DIR/bin/
+chmod +x $INSTALL_DIR/bin/connect.sh
 cp ./ttn-gateway.service /lib/systemd/system/
 systemctl enable ttn-gateway.service
 
