@@ -59,28 +59,29 @@ echo "Detected EUI $GATEWAY_EUI from $GATEWAY_EUI_NIC"
 #    NEW_HOSTNAME="ttn-gateway"
 #    REMOTE_CONFIG=true
 #else
-    printf "       Host name [ttn-gateway]:"
+    printf "       Host name [cytron-lora-gw]:"
     read NEW_HOSTNAME
-    if [[ $NEW_HOSTNAME == "" ]]; then NEW_HOSTNAME="ttn-gateway"; fi
+    if [[ $NEW_HOSTNAME == "" ]]; then NEW_HOSTNAME="cytron-lora-gw"; fi
 
-    printf "       Descriptive name [ttn-ic880a]:"
+    printf "       Descriptive name [Cytron Indoor LoRa Gateway]:"
     read GATEWAY_NAME
-    if [[ $GATEWAY_NAME == "" ]]; then GATEWAY_NAME="ttn-ic880a"; fi
+    if [[ $GATEWAY_NAME == "" ]]; then GATEWAY_NAME="Cytron Indoor LoRa Gateway"; fi
 
-    printf "       Contact email: "
+    printf "       Contact email[support@cytron.com.my]: "
     read GATEWAY_EMAIL
+    if [[ $GATEWAY_EMAIL == "" ]]; then GATEWAY_EMAIL="support@cytron.com.my"; fi
 
-    printf "       Latitude [0]: "
+    printf "       Latitude [5.315007]: "
     read GATEWAY_LAT
-    if [[ $GATEWAY_LAT == "" ]]; then GATEWAY_LAT=0; fi
+    if [[ $GATEWAY_LAT == "" ]]; then GATEWAY_LAT="5.315007"; fi
 
-    printf "       Longitude [0]: "
+    printf "       Longitude [100.4737183]: "
     read GATEWAY_LON
-    if [[ $GATEWAY_LON == "" ]]; then GATEWAY_LON=0; fi
+    if [[ $GATEWAY_LON == "" ]]; then GATEWAY_LON="100.4737183"; fi
 
-    printf "       Altitude [0]: "
+    printf "       Altitude [17]: "
     read GATEWAY_ALT
-    if [[ $GATEWAY_ALT == "" ]]; then GATEWAY_ALT=0; fi
+    if [[ $GATEWAY_ALT == "" ]]; then GATEWAY_ALT="17"; fi
 #fi
 
 
